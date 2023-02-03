@@ -1,4 +1,4 @@
-# Dio cookie handler/manager.
+# Dio cookie handler/manager. ![workflow](https://github.com/hurelhuyag/dio_cookie_cached_handler/actions/workflows/ci.yaml/badge.svg)
 
 Manager Dio Cookies in non web environments.
 
