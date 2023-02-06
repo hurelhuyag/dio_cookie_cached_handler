@@ -8,7 +8,7 @@ import 'cookie.dart';
 
 class CookieStorage {
 
-  DateFormat cookieDateFormat = DateFormat("EEE, dd MMM yyyy HH':'mm':'ss 'GMT'");
+  final DateFormat _cookieDateFormat = DateFormat("EEE, dd MMM yyyy HH':'mm':'ss 'GMT'");
   File? _file;
   final Set<Cookie> _cookies = {};
   final Future<String> storePath;
@@ -100,7 +100,7 @@ class CookieStorage {
         ? setCookie.substring(i)
         : setCookie.substring(i, j);
 
-    return cookieDateFormat.parse(expiresStr);
+    return _cookieDateFormat.parse(expiresStr);
   }
 
   DateTime? findMaxAgeAttr(String setCookie, int startIndex, DateTime now) {
