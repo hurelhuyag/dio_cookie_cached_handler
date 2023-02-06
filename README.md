@@ -33,9 +33,12 @@ Setup:
 ```dart
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_caching_handler/dio_cookie_caching_handler.dart';
+import 'package:flutter/foundation.dart';
 
 final dio = Dio();
-dio.interceptors.add(cookieCachedHandler());
+if (!kIsWeb) {
+  dio.interceptors.add(cookieCachedHandler()); 
+}
 ```
 
 ## Additional information
