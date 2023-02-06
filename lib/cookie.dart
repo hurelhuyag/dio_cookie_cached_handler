@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+
+@immutable
 class Cookie {
   final String name;
   final String value;
@@ -8,4 +11,11 @@ class Cookie {
     required this.value,
     required this.expires,
   });
+
+  /// In our case name is only property we distinguish different cookies
+  @override
+  int get hashCode => name.hashCode;
+
+  @override
+  bool operator ==(Object other) => other is Cookie && other.name == name;
 }

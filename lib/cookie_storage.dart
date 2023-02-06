@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import 'cookie.dart';
-import 'package:flutter/foundation.dart';
 
 class CookieStorage {
 
@@ -26,7 +26,7 @@ class CookieStorage {
     _cookies.clear();
     final file = _file;
     if (file != null && file.existsSync()) {
-      file.deleteSync();
+      await file.writeAsString("", mode: FileMode.write, flush: true);
     }
   }
 
@@ -89,6 +89,36 @@ class CookieStorage {
     }
   }
 
+  DateTime? findExpiresAttr(String setCookie, int startIndex) {
+    final ai = setCookie.indexOf("Expires=", startIndex);
+    if (ai == -1) {
+      return null;
+    }
+    final i = ai + 8;
+    final j = setCookie.indexOf(';', i);
+    final expiresStr = j == -1
+        ? setCookie.substring(i)
+        : setCookie.substring(i, j);
+
+    return cookieDateFormat.parse(expiresStr);
+  }
+
+  DateTime? findMaxAgeAttr(String setCookie, int startIndex, DateTime now) {
+    final ai = setCookie.indexOf("Max-Age=", startIndex);
+    if (ai == -1) {
+      return null;
+    }
+
+    final i = ai + 8;
+    final j = setCookie.indexOf(';', i);
+    final maxAgeStr = j == -1
+        ? setCookie.substring(i)
+        : setCookie.substring(i, j);
+    final maxAge = int.parse(maxAgeStr);
+
+    return now.add(Duration(seconds: maxAge));
+  }
+
   Future<void> storeFromRes(Response<dynamic> res) async {
     final setCookies = res.headers["Set-Cookie"];
     if (setCookies != null) {
@@ -97,43 +127,26 @@ class CookieStorage {
       for (final setCookie in setCookies) {
         final i = setCookie.indexOf('=');
         final j = setCookie.indexOf(';', i);
-        final key = setCookie.substring(0, i);
-        final value = j == -1 ? setCookie.substring(i+1) : setCookie.substring(i+1, j);
-        DateTime? expires;
-        if (j != -1) {
-          final expiresStart = setCookie.indexOf("Expires=");
-          if (expiresStart != -1) {
-            final expiresValueStart = expiresStart + 8;
-            final expiresEnd = setCookie.indexOf(';', expiresValueStart);
-            final expiresStr = expiresEnd == -1
-                ? setCookie.substring(expiresValueStart)
-                : setCookie.substring(expiresValueStart, expiresEnd);
-            expires = cookieDateFormat.parse(expiresStr);
 
-            if (expires.isBefore(now)) {
-              _cookies.remove(key);
-              continue;
-            }
-          } else {
-            final maxAgeStart = setCookie.indexOf("Max-Age=");
-            if (maxAgeStart != -1) {
-              final maxAgeValueStart = maxAgeStart + 8;
-              final maxAgeValueEnd = setCookie.indexOf(';', maxAgeValueStart);
-              final maxAgeStr = maxAgeValueEnd == -1
-                  ? setCookie.substring(maxAgeValueStart)
-                  : setCookie.substring(maxAgeValueStart, maxAgeValueEnd);
-              final maxAge = int.parse(maxAgeStr);
-              if (maxAge == 0) {
-                _cookies.remove(key);
-                continue;
-              }
-              expires = now.add(Duration(seconds: maxAge));
-            }
-          }
+        final key = setCookie.substring(0, i);
+        late final String value;
+        late final DateTime expires;
+
+        if (j == -1) {
+          value = setCookie.substring(i+1);
+          expires = now.add(const Duration(days: 400));
+        } else {
+          value = setCookie.substring(i+1, j);
+          expires = findExpiresAttr(setCookie, j)
+                      ?? findMaxAgeAttr(setCookie, j, now)
+                      ?? now.add(const Duration(days: 400));
         }
-        expires ??= now.add(const Duration(days: 400));
-        _cookies.removeWhere((element) => element.name == key);
-        _cookies.add(Cookie(name: key, value: value, expires: expires));
+
+        final cookie = Cookie(name: key, value: value, expires: expires);
+        _cookies.remove(cookie);
+        if (now.isBefore(expires)) {
+          _cookies.add(cookie);
+        }
       }
       await storeAll();
     }
@@ -156,7 +169,9 @@ class CookieStorage {
         result.write("${cookie.name}=${cookie.value}");
       }
       _cookies.removeAll(remove);
-      options.headers["cookie"] = result.toString();
+      final resultStr = result.toString();
+      debugPrint("Request Cookies: $resultStr");
+      options.headers["cookie"] = resultStr;
     }
   }
 }

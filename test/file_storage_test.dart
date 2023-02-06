@@ -20,13 +20,13 @@ void main() {
     final expire = DateTime.now().add(const Duration(days: 1));
     final file = File(cookiePath);
     await file.writeAsString("""
-ZNTS=123456789;${expire.toString()}
-ZNTR=r123;${expire.toString()}
+ZNTS=123456789;${expire.toIso8601String()}
+ZNTR=r123;${expire.toIso8601String()}
 
     """);
 
-    var cs = CookieStorage(Future.value(cookiePath));
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final cs = CookieStorage(Future.value(cookiePath));
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=123456789; ZNTR=r123");
@@ -42,15 +42,15 @@ ZNTR=r123;${expire2.toIso8601String()}
 
     """);
 
-    var cs = CookieStorage(Future.value(cookiePath));
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final cs = CookieStorage(Future.value(cookiePath));
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=123456789");
   });
 
   test('storing to file', () async {
-    var cs = CookieStorage(Future.value(cookiePath));
+    final cs = CookieStorage(Future.value(cookiePath));
     await cs.storeFromRes(Response(
       requestOptions: RequestOptions(path: "/api/v1"),
       headers: Headers()
@@ -68,7 +68,7 @@ ZNTR=r123;${expire2.toIso8601String()}
   });
 
   test('storing to file with expired cookie', () async {
-    var cs = CookieStorage(Future.value(cookiePath));
+    final cs = CookieStorage(Future.value(cookiePath));
     await cs.storeFromRes(Response(
         requestOptions: RequestOptions(path: "/api/v1"),
         headers: Headers()

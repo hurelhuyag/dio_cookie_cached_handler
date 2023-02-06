@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_caching_handler/cookie_storage.dart';
 import 'package:flutter/widgets.dart';
@@ -20,7 +22,7 @@ void main() {
   });
 
   test('make sure cookie storage is empty', () {
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     cs.loadToReq(ro);
     expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
@@ -33,7 +35,7 @@ void main() {
         ..add("set-cookie", "ZNTS=1234567890")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
@@ -46,7 +48,7 @@ void main() {
         ..add("set-cookie", "ZNTS=1234567890; HttpOnly;")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
@@ -59,7 +61,7 @@ void main() {
         ..add("set-cookie", "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
@@ -72,7 +74,7 @@ void main() {
           ..add("set-cookie", "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().subtract(const Duration(days: 1)))}")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
@@ -85,7 +87,7 @@ void main() {
           ..add("set-cookie", "ZNTS=1234567890; Max-Age=3600")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
@@ -98,7 +100,7 @@ void main() {
         ..add("set-cookie", "ZNTS=1234567890; Max-Age=0")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
@@ -112,13 +114,15 @@ void main() {
         ..add("set-cookie", "ZNTR=zntr12345678; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")
     ));
 
-    var ro = RequestOptions(path: "/api/v1", headers: {});
+    final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890; ZNTR=zntr12345678");
   });
 
   test('rewrite same cookie', () async {
+    final file = File(cookiePath);
+    expect(!file.existsSync() || file.lengthSync() == 0, true);
 
     // initial setup
     await cs.storeFromRes(Response(
@@ -132,6 +136,10 @@ void main() {
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=v1");
 
+    var fileData = File(cookiePath).readAsLinesSync();
+    expect(fileData.length, 1);
+    expect(fileData[0].contains("ZNTS=v1"), true);
+
     // rewrite cookie
     await cs.storeFromRes(Response(
       requestOptions: RequestOptions(path: "/api/v1"),
@@ -143,7 +151,10 @@ void main() {
     await cs.loadToReq(ro);
     expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=v2");
-  });
 
+    fileData = File(cookiePath).readAsLinesSync();
+    expect(fileData.length, 1);
+    expect(fileData[0].contains("ZNTS=v2"), true);
+  });
 
 }
