@@ -15,8 +15,7 @@ Manager Dio Cookies in non web environments.
 pubspec.yaml
 ```
 dependencies:
-  dio_cookie_caching_handler:
-    git: git@github.com:hurelhuyag/dio_cookie_cached_handler.git
+  dio_cookie_caching_handler: ^0.0.1
 ```
 
 Run this command
