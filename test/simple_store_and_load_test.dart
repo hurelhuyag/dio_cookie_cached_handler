@@ -30,10 +30,7 @@ void main() {
 
   test('simple set-cookie', () async {
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=1234567890")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"), headers: Headers()..add("set-cookie", "ZNTS=1234567890")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -43,10 +40,8 @@ void main() {
 
   test('simple set-cookie with valueless attribute', () async {
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=1234567890; HttpOnly;")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()..add("set-cookie", "ZNTS=1234567890; HttpOnly;")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -56,10 +51,10 @@ void main() {
 
   test('set-cookie with expires', () async {
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()
+          ..add("set-cookie",
+              "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -71,8 +66,8 @@ void main() {
     await cs.storeFromRes(Response(
         requestOptions: RequestOptions(path: "/api/v1"),
         headers: Headers()
-          ..add("set-cookie", "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().subtract(const Duration(days: 1)))}")
-    ));
+          ..add("set-cookie",
+              "ZNTS=1234567890; Expires=${cookieDateFormat.format(DateTime.now().subtract(const Duration(days: 1)))}")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -83,9 +78,7 @@ void main() {
   test('set-cookie with max-age', () async {
     await cs.storeFromRes(Response(
         requestOptions: RequestOptions(path: "/api/v1"),
-        headers: Headers()
-          ..add("set-cookie", "ZNTS=1234567890; Max-Age=3600")
-    ));
+        headers: Headers()..add("set-cookie", "ZNTS=1234567890; Max-Age=3600")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -95,10 +88,8 @@ void main() {
 
   test('set-cookie with zero max-age', () async {
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=1234567890; Max-Age=0")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()..add("set-cookie", "ZNTS=1234567890; Max-Age=0")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -108,11 +99,11 @@ void main() {
 
   test('set-cookie with multiple cookies', () async {
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=1234567890; HttpOnly; Secure")
-        ..add("set-cookie", "ZNTR=zntr12345678; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()
+          ..add("set-cookie", "ZNTS=1234567890; HttpOnly; Secure")
+          ..add("set-cookie",
+              "ZNTR=zntr12345678; Expires=${cookieDateFormat.format(DateTime.now().add(const Duration(days: 1)))}")));
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -125,11 +116,8 @@ void main() {
     expect(!file.existsSync() || file.lengthSync() == 0, true);
 
     // initial setup
-    await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=v1")
-    ));
+    await cs.storeFromRes(
+        Response(requestOptions: RequestOptions(path: "/api/v1"), headers: Headers()..add("set-cookie", "ZNTS=v1")));
 
     var ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -141,11 +129,8 @@ void main() {
     expect(fileData[0].contains("ZNTS=v1"), true);
 
     // rewrite cookie
-    await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=v2")
-    ));
+    await cs.storeFromRes(
+        Response(requestOptions: RequestOptions(path: "/api/v1"), headers: Headers()..add("set-cookie", "ZNTS=v2")));
 
     ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
@@ -156,5 +141,4 @@ void main() {
     expect(fileData.length, 1);
     expect(fileData[0].contains("ZNTS=v2"), true);
   });
-
 }

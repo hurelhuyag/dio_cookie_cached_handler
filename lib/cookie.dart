@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+/// Cookie model for internal use. Nothing to do with dependant projects
 @immutable
 class Cookie {
   final String name;

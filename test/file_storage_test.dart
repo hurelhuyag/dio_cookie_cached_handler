@@ -52,11 +52,10 @@ ZNTR=r123;${expire2.toIso8601String()}
   test('storing to file', () async {
     final cs = CookieStorage(Future.value(cookiePath));
     await cs.storeFromRes(Response(
-      requestOptions: RequestOptions(path: "/api/v1"),
-      headers: Headers()
-        ..add("set-cookie", "ZNTS=v1")
-        ..add("set-cookie", "ZNTR=r123")
-    ));
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()
+          ..add("set-cookie", "ZNTS=v1")
+          ..add("set-cookie", "ZNTR=r123")));
 
     final file = File(cookiePath);
     expect(file.existsSync(), true);
@@ -73,8 +72,7 @@ ZNTR=r123;${expire2.toIso8601String()}
         requestOptions: RequestOptions(path: "/api/v1"),
         headers: Headers()
           ..add("set-cookie", "ZNTS=v1")
-          ..add("set-cookie", "ZNTR=r123; Max-Age=0")
-    ));
+          ..add("set-cookie", "ZNTR=r123; Max-Age=0")));
 
     final file = File(cookiePath);
     expect(file.existsSync(), true);

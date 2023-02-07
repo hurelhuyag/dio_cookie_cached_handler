@@ -6,13 +6,13 @@ import 'package:intl/intl.dart';
 
 import 'cookie.dart';
 
+/// Our main class. This is where our main job is done.
 class CookieStorage {
-
   final DateFormat _cookieDateFormat = DateFormat("EEE, dd MMM yyyy HH':'mm':'ss 'GMT'");
   File? _file;
   final Set<Cookie> _cookies = {};
   final Future<String> storePath;
-  
+
   CookieStorage(this.storePath);
 
   Future<File> _ensureOpen() async {
@@ -46,8 +46,8 @@ class CookieStorage {
         final i = line.indexOf('=');
         final j = line.indexOf(';', i);
         final key = line.substring(0, i);
-        final value = line.substring(i+1, j);
-        final expireStr = line.substring(j +1);
+        final value = line.substring(i + 1, j);
+        final expireStr = line.substring(j + 1);
         final expire = DateTime.parse(expireStr);
         if (now.isAfter(expire)) {
           continue;
@@ -96,9 +96,7 @@ class CookieStorage {
     }
     final i = ai + 8;
     final j = setCookie.indexOf(';', i);
-    final expiresStr = j == -1
-        ? setCookie.substring(i)
-        : setCookie.substring(i, j);
+    final expiresStr = j == -1 ? setCookie.substring(i) : setCookie.substring(i, j);
 
     return _cookieDateFormat.parse(expiresStr);
   }
@@ -111,9 +109,7 @@ class CookieStorage {
 
     final i = ai + 8;
     final j = setCookie.indexOf(';', i);
-    final maxAgeStr = j == -1
-        ? setCookie.substring(i)
-        : setCookie.substring(i, j);
+    final maxAgeStr = j == -1 ? setCookie.substring(i) : setCookie.substring(i, j);
     final maxAge = int.parse(maxAgeStr);
 
     return now.add(Duration(seconds: maxAge));
@@ -133,13 +129,12 @@ class CookieStorage {
         late final DateTime expires;
 
         if (j == -1) {
-          value = setCookie.substring(i+1);
+          value = setCookie.substring(i + 1);
           expires = now.add(const Duration(days: 400));
         } else {
-          value = setCookie.substring(i+1, j);
-          expires = findExpiresAttr(setCookie, j)
-                      ?? findMaxAgeAttr(setCookie, j, now)
-                      ?? now.add(const Duration(days: 400));
+          value = setCookie.substring(i + 1, j);
+          expires =
+              findExpiresAttr(setCookie, j) ?? findMaxAgeAttr(setCookie, j, now) ?? now.add(const Duration(days: 400));
         }
 
         final cookie = Cookie(name: key, value: value, expires: expires);
