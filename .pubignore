@@ -1,0 +1,13 @@
+/.idea
+/build
+/windows
+/linux
+/macos
+/android
+/ios
+/screencast.png
+/*.iml
+
+/example/.idea
+/example/.dart_tool
+/example/*.iml
