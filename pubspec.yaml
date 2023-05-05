@@ -1,6 +1,6 @@
 name: dio_cookie_caching_handler
 description: An Dio interceptor stores cookies and puts back to every requests made.
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/hurelhuyag/dio_cookie_cached_handler
 
 environment:
