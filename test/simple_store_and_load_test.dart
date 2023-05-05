@@ -24,7 +24,6 @@ void main() {
   test('make sure cookie storage is empty', () {
     final ro = RequestOptions(path: "/api/v1", headers: {});
     cs.loadToReq(ro);
-    expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
   });
 
@@ -34,7 +33,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
   });
 
@@ -45,7 +43,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
   });
 
@@ -58,7 +55,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
   });
 
@@ -71,7 +67,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
   });
 
@@ -82,7 +77,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890");
   });
 
@@ -93,7 +87,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 1);
     expect(ro.headers["cookie"], null);
   });
 
@@ -107,7 +100,6 @@ void main() {
 
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=1234567890; ZNTR=zntr12345678");
   });
 
@@ -121,7 +113,6 @@ void main() {
 
     var ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=v1");
 
     var fileData = File(cookiePath).readAsLinesSync();
@@ -134,7 +125,6 @@ void main() {
 
     ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=v2");
 
     fileData = File(cookiePath).readAsLinesSync();

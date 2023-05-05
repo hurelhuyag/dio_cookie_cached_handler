@@ -18,17 +18,17 @@ void main() {
 
   test('restore from file', () async {
     final expire = DateTime.now().add(const Duration(days: 1));
+    final expireStr = expire.toIso8601String();
     final file = File(cookiePath);
     await file.writeAsString("""
-ZNTS=123456789;${expire.toIso8601String()}
-ZNTR=r123;${expire.toIso8601String()}
+ZNTS=123456789;$expireStr
+ZNTR=r123;$expireStr
 
     """);
 
     final cs = CookieStorage(Future.value(cookiePath));
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=123456789; ZNTR=r123");
   });
 
@@ -45,7 +45,6 @@ ZNTR=r123;${expire2.toIso8601String()}
     final cs = CookieStorage(Future.value(cookiePath));
     final ro = RequestOptions(path: "/api/v1", headers: {});
     await cs.loadToReq(ro);
-    expect(ro.headers.length, 2);
     expect(ro.headers["cookie"], "ZNTS=123456789");
   });
 

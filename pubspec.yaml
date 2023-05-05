@@ -1,6 +1,6 @@
 name: dio_cookie_caching_handler
 description: An Dio interceptor stores cookies and puts back to every requests made.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/hurelhuyag/dio_cookie_cached_handler
 
 environment:
@@ -13,8 +13,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0
-  dio: ^4.0.6
-  path_provider: ^2.0.12
+  dio: ^5.1.1
+  path_provider: ^2.0.14
 
 dev_dependencies:
   flutter_test:
