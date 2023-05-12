@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Dependency versions removed
+
 ## 0.0.4
 
 * Changelog updated
