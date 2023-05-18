@@ -1,3 +1,7 @@
+## 0.0.6
+
+* UTC Expires test
+
 ## 0.0.5
 
 * Dependency versions removed

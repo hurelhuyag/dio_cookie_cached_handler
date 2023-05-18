@@ -90,6 +90,28 @@ void main() {
     expect(ro.headers["cookie"], null);
   });
 
+  test('set-cookie with expires 1 hour', () async {
+    final expires = cookieDateFormat.format(DateTime.now().toUtc().add(const Duration(hours: 1)));
+    await cs.storeFromRes(Response(
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()..add("set-cookie", "ZNTS=1234567890; Expires=$expires")));
+
+    final ro = RequestOptions(path: "/api/v1", headers: {});
+    await cs.loadToReq(ro);
+    expect(ro.headers["cookie"], "ZNTS=1234567890");
+  });
+
+  test('set-cookie with expires now', () async {
+    final expires = cookieDateFormat.format(DateTime.now().toUtc());
+    await cs.storeFromRes(Response(
+        requestOptions: RequestOptions(path: "/api/v1"),
+        headers: Headers()..add("set-cookie", "ZNTS=1234567890; Expires=$expires")));
+
+    final ro = RequestOptions(path: "/api/v1", headers: {});
+    await cs.loadToReq(ro);
+    expect(ro.headers["cookie"], null);
+  });
+
   test('set-cookie with multiple cookies', () async {
     await cs.storeFromRes(Response(
         requestOptions: RequestOptions(path: "/api/v1"),
