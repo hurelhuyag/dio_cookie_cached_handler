@@ -149,6 +149,14 @@ class CookieStorage {
 
   Future<void> loadToReq(RequestOptions options) async {
     await _ensureOpen();
+    final resultStr = await toCookieString();
+    if (resultStr != null) {
+      options.headers["cookie"] = resultStr;
+    }
+  }
+
+  Future<String?> toCookieString() async {
+    await _ensureOpen();
     if (_cookies.isNotEmpty) {
       final result = StringBuffer();
       final now = DateTime.now();
@@ -166,7 +174,9 @@ class CookieStorage {
       _cookies.removeAll(remove);
       final resultStr = result.toString();
       debugPrint("Request Cookies: $resultStr");
-      options.headers["cookie"] = resultStr;
+      return resultStr;
+    } else {
+      return null;
     }
   }
 }

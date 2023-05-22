@@ -1,3 +1,7 @@
+## 0.0.7
+
+* ability to get cookies method
+
 ## 0.0.6
 
 * UTC Expires test

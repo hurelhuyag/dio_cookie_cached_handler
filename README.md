@@ -15,7 +15,7 @@ Manager Dio Cookies in non web environments.
 pubspec.yaml
 ```
 dependencies:
-  dio_cookie_caching_handler: ^0.0.1
+  dio_cookie_caching_handler: ^0.0.7
 ```
 
 Run this command
@@ -33,6 +33,6 @@ import 'package:flutter/foundation.dart';
 
 final dio = Dio();
 if (!kIsWeb) {
-  dio.interceptors.add(cookieCachedHandler()); 
+  dio.interceptors.add(cookieCachedHandler());
 }
 ```

@@ -81,4 +81,17 @@ ZNTR=r123;${expire2.toIso8601String()}
     expect(lines.contains("ZNTS=v1;"), true);
     expect(lines.contains("ZNTR=r123;"), false);
   });
+
+  test('toCookieString', () async {
+    final expire1 = DateTime.now().add(const Duration(days: 1));
+    final file = File(cookiePath);
+    await file.writeAsString("""
+ZNTS=123456789;${expire1.toIso8601String()}
+
+    """);
+
+    final cs = CookieStorage(Future.value(cookiePath));
+    final cookies = await cs.toCookieString();
+    expect(cookies, "ZNTS=123456789");
+  });
 }
