@@ -97,8 +97,11 @@ class CookieStorage {
     final i = ai + 8;
     final j = setCookie.indexOf(';', i);
     final expiresStr = j == -1 ? setCookie.substring(i) : setCookie.substring(i, j);
-
-    return _cookieDateFormat.parse(expiresStr, true);
+    try {
+      return _cookieDateFormat.parse(expiresStr, true);
+    } catch (_) {
+      return null;
+    }
   }
 
   DateTime? findMaxAgeAttr(String setCookie, int startIndex, DateTime now) {
