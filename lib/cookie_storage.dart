@@ -6,6 +6,14 @@ import 'package:intl/intl.dart';
 
 import 'cookie.dart';
 
+bool cookieStorageLoggingEnabled = false;
+
+void _log(String message) {
+  if (cookieStorageLoggingEnabled) {
+    debugPrint(message);
+  }
+}
+
 /// Our main class. This is where our main job is done.
 class CookieStorage {
   final DateFormat _cookieDateFormat = DateFormat("EEE, dd MMM yyyy HH':'mm':'ss 'GMT'");
@@ -32,7 +40,7 @@ class CookieStorage {
 
   Future<void> _init() async {
     final file = File(await storePath);
-    debugPrint("restoring from: $file");
+    _log("restoring from: $file");
     final exists = await file.exists();
     if (exists) {
       final lines = await file.readAsLines();
@@ -42,7 +50,7 @@ class CookieStorage {
         if (line.isEmpty) {
           continue;
         }
-        debugPrint("restoring cookie $line");
+        _log("restoring cookie $line");
         final i = line.indexOf('=');
         final j = line.indexOf(';', i);
         final key = line.substring(0, i);
@@ -63,13 +71,13 @@ class CookieStorage {
   Future<void> storeAll() async {
     final file = await _ensureOpen();
     final sink = file.openWrite(mode: FileMode.write);
-    debugPrint("storing into $file");
+    _log("storing into $file");
     try {
       final now = DateTime.now();
       final remove = <Cookie>[];
       for (final cookie in _cookies) {
         if (now.isBefore(cookie.expires)) {
-          debugPrint("storing cookie: ${cookie.name}=${cookie.value};${cookie.expires.toIso8601String()}");
+          _log("storing cookie: ${cookie.name}=${cookie.value};${cookie.expires.toIso8601String()}");
           sink
             ..write(cookie.name)
             ..write("=")
@@ -81,7 +89,7 @@ class CookieStorage {
           remove.add(cookie);
         }
       }
-      debugPrint("removing expired cookies: $remove");
+      _log("removing expired cookies: $remove");
       _cookies.removeAll(remove);
     } finally {
       await sink.flush();
@@ -118,7 +126,7 @@ class CookieStorage {
   Future<void> storeFromRes(Response<dynamic> res) async {
     final setCookies = res.headers["Set-Cookie"];
     if (setCookies != null) {
-      debugPrint("Set-Cookie headers $setCookies");
+      _log("Set-Cookie headers $setCookies");
       final now = DateTime.now();
       for (final setCookie in setCookies) {
         final i = setCookie.indexOf('=');
@@ -173,7 +181,7 @@ class CookieStorage {
       }
       _cookies.removeAll(remove);
       final resultStr = result.toString();
-      debugPrint("Request Cookies: $resultStr");
+      _log("Request Cookies: $resultStr");
       return resultStr;
     } else {
       return null;
