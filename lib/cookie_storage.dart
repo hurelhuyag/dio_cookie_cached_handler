@@ -20,8 +20,9 @@ class CookieStorage {
   File? _file;
   final Set<Cookie> _cookies = {};
   final Future<String> storePath;
+  final void Function(String)? setCookieListener;
 
-  CookieStorage(this.storePath);
+  CookieStorage(this.storePath, {this.setCookieListener});
 
   Future<File> _ensureOpen() async {
     if (_file == null) {
@@ -150,6 +151,7 @@ class CookieStorage {
         if (now.isBefore(expires)) {
           _cookies.add(cookie);
         }
+        setCookieListener?.call(key);
       }
       await storeAll();
     }

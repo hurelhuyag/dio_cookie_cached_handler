@@ -1,3 +1,7 @@
+## 0.0.9
+
+* setCookieListener callback
+
 ## 0.0.8
 
 * logging enable toggle
