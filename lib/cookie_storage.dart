@@ -108,7 +108,7 @@ class CookieStorage {
     final expiresStr = j == -1 ? setCookie.substring(i) : setCookie.substring(i, j);
     try {
       return _cookieDateFormat.parse(expiresStr, true);
-    } catch (_) {
+    } on FormatException catch (_) {
       return null;
     }
   }
